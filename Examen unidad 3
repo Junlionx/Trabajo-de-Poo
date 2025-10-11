@@ -1,0 +1,126 @@
+class Planeta:
+    total_planetas = 0
+
+    def __init__(self, nombre, distancia):
+        self.nombre = nombre
+        self.distancia = distancia
+        Planeta.total_planetas += 1
+        print(f"Planeta {self.nombre} registrado correctamente.")
+
+    def __del__(self):
+        Planeta.total_planetas -= 1
+        print(f"Planeta {self.nombre} eliminado.")
+
+    @classmethod
+    def contar_planetas(cls):
+        return f"Total de planetas: {cls.total_planetas}"
+
+    def mostrar_info(self):
+        print(f"{self.nombre} - Distancia desde la Tierra: {self.distancia} millones de km")
+
+
+class NaveEspacial:
+    total_naves = 0
+
+    def __init__(self, nombre, velocidad):
+        self.nombre = nombre
+        self.velocidad = velocidad
+        self.destino = None
+        NaveEspacial.total_naves += 1
+        print(f"Nave {self.nombre} registrada.")
+
+    def __del__(self):
+        NaveEspacial.total_naves -= 1
+        print(f"Nave {self.nombre} destruida.")
+
+    @classmethod
+    def contar_naves(cls):
+        return f"Total de naves: {cls.total_naves}"
+
+    def asignar_destino(self, planeta):
+        self.destino = planeta
+        print(f"La nave {self.nombre} viajará hacia {planeta.nombre}.")
+
+    def calcular_tiempo_viaje(self):
+        if self.destino:
+            tiempo = (self.destino.distancia * 1_000_000) / (self.velocidad * 3600)
+            print(f"Tiempo estimado de viaje a {self.destino.nombre}: {tiempo:.2f} horas.")
+        else:
+            print("No hay destino asignado.")
+
+    def asignar_mision(self, *args, **kwargs):
+        print(f"Misión especial para {self.nombre}:")
+        if args:
+            print("Recursos:", ", ".join(args))
+        if kwargs:
+            for clave, valor in kwargs.items():
+                print(f"{clave.capitalize()}: {valor}")
+
+
+def menu():
+    planetas = []
+    naves = []
+
+    while True:
+        print("\n==== SIMULADOR DE VIAJES INTERPLANETARIOS ====")
+        print("1. Registrar planeta")
+        print("2. Registrar nave")
+        print("3. Asignar destino")
+        print("4. Calcular tiempo de viaje")
+        print("5. Mostrar información general")
+        print("6. Salir")
+        op = input("Selecciona una opción: ")
+
+        if op == "1":
+            nombre = input("Nombre del planeta: ")
+            distancia = float(input("Distancia (millones de km): "))
+            planetas.append(Planeta(nombre, distancia))
+
+        elif op == "2":
+            nombre = input("Nombre de la nave: ")
+            velocidad = float(input("Velocidad (km/s): "))
+            naves.append(NaveEspacial(nombre, velocidad))
+
+        elif op == "3":
+            if not naves or not planetas:
+                print("Primero debes registrar al menos una nave y un planeta.")
+                continue
+
+            for i, nave in enumerate(naves):
+                print(f"{i+1}. {nave.nombre}")
+            idx_nave = int(input("Selecciona la nave: ")) - 1
+
+            for j, planeta in enumerate(planetas):
+                print(f"{j+1}. {planeta.nombre}")
+            idx_planeta = int(input("Selecciona el destino: ")) - 1
+
+            naves[idx_nave].asignar_destino(planetas[idx_planeta])
+
+        elif op == "4":
+            if not naves:
+                print("No hay naves registradas.")
+                continue
+            for i, nave in enumerate(naves):
+                print(f"{i+1}. {nave.nombre}")
+            idx = int(input("Selecciona la nave: ")) - 1
+            naves[idx].calcular_tiempo_viaje()
+
+        elif op == "5":
+            print("\n--- INFORMACIÓN GENERAL ---")
+            print(Planeta.contar_planetas())
+            print(NaveEspacial.contar_naves())
+            for p in planetas:
+                p.mostrar_info()
+            for n in naves:
+                destino = n.destino.nombre if n.destino else "Sin destino"
+                print(f"{n.nombre} → Destino: {destino}")
+
+        elif op == "6":
+            print("Saliendo del simulador...")
+            break
+        else:
+            print("Opción no válida. Intenta de nuevo.")
+
+
+if __name__ == "__main__":
+    menu()
