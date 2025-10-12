@@ -1,0 +1,128 @@
+class Pokemon:
+    total_pokemons = 0
+
+    def __init__(self, nombre, tipo, nivel=1, ataque=10, defensa=10, salud=100):
+        self.nombre = nombre
+        self.tipo = tipo
+        self.nivel = nivel
+        self.ataque = ataque
+        self.defensa = defensa
+        self.salud = salud
+        Pokemon.total_pokemons += 1
+        print(f"¡Has creado a {self.nombre} ({self.tipo})!")
+
+    def __del__(self):
+        Pokemon.total_pokemons -= 1
+        print(f"{self.nombre} ha sido liberado...")
+
+    def entrenar(self, *atributos):
+        print(f"{self.nombre} está entrenando...")
+        self.nivel += 1
+        if not atributos:
+            self.ataque += 5
+            self.defensa += 3
+            self.salud += 10
+        else:
+            for stat in atributos:
+                if stat.lower() == "ataque":
+                    self.ataque += 5
+                elif stat.lower() == "defensa":
+                    self.defensa += 3
+                elif stat.lower() == "salud":
+                    self.salud += 10
+        print(f"{self.nombre} subió a nivel {self.nivel}!")
+
+    def mostrar_info(self):
+        print(f"\n{self.nombre} ({self.tipo})")
+        print(f"Nivel: {self.nivel}")
+        print(f"Ataque: {self.ataque}")
+        print(f"Defensa: {self.defensa}")
+        print(f"Salud: {self.salud}")
+
+    def atacar_objetivo(self, otro):
+        print(f"\n{self.nombre} ataca a {otro.nombre}!")
+        daño = max(0, self.ataque - otro.defensa)
+        otro.salud -= daño
+        if otro.salud < 0:
+            otro.salud = 0
+        print(f"{otro.nombre} perdió {daño} puntos de salud. Salud restante: {otro.salud}")
+
+    @classmethod
+    def total_pokemon(cls):
+        print(f"Hay {cls.total_pokemons} Pokémon creados.")
+
+    def __str__(self):
+        return f"{self.nombre} ({self.tipo}) - Nivel {self.nivel} | Atq: {self.ataque} Def: {self.defensa} Salud: {self.salud}"
+
+
+def main():
+    pokemones = []
+
+    while True:
+        print("\n--- MENÚ POKÉMON ---")
+        print("1. Capturar nuevo Pokémon")
+        print("2. Entrenar un Pokémon")
+        print("3. Ver todos los Pokémon")
+        print("4. Simular combate")
+        print("5. Liberar un Pokémon")
+        print("6. Mostrar cuántos Pokémon existen")
+        print("7. Salir")
+
+        opcion = input("Elige una opción: ")
+
+        if opcion == "1":
+            nombre = input("Nombre del Pokémon: ")
+            tipo = input("Tipo: ")
+            nuevo = Pokemon(nombre, tipo)
+            pokemones.append(nuevo)
+
+        elif opcion == "2":
+            if not pokemones:
+                print("No tienes Pokémon.")
+            else:
+                for i, p in enumerate(pokemones):
+                    print(f"{i+1}. {p.nombre}")
+                idx = int(input("Elige un Pokémon: ")) - 1
+                stats = input("¿Qué mejorar? (ataque, defensa, salud o vacío para todo): ").split()
+                pokemones[idx].entrenar(*stats)
+
+        elif opcion == "3":
+            if not pokemones:
+                print("No hay Pokémon.")
+            else:
+                for p in pokemones:
+                    p.mostrar_info()
+
+        elif opcion == "4":
+            if len(pokemones) < 2:
+                print("Necesitas al menos dos Pokémon.")
+            else:
+                for i, p in enumerate(pokemones):
+                    print(f"{i+1}. {p.nombre}")
+                a = int(input("Elige el atacante: ")) - 1
+                d = int(input("Elige el defensor: ")) - 1
+                if a == d:
+                    print("No puedes atacar al mismo Pokémon.")
+                else:
+                    pokemones[a].atacar_objetivo(pokemones[d])
+
+        elif opcion == "5":
+            if not pokemones:
+                print("No tienes Pokémon para liberar.")
+            else:
+                for i, p in enumerate(pokemones):
+                    print(f"{i+1}. {p.nombre}")
+                idx = int(input("Elige el Pokémon a liberar: ")) - 1
+                print(f"Liberando a {pokemones[idx].nombre}...")
+                del pokemones[idx]
+
+        elif opcion == "6":
+            Pokemon.total_pokemon()
+
+        elif opcion == "7":
+            print("Saliendo del juego Pokémon...")
+            break
+
+        else:
+            print("Opción no válida.")
+
