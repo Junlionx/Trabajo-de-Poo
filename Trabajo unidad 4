@@ -1,0 +1,105 @@
+class Artista:
+    def __init__(self, nombre, genero, popularidad):
+        self.nombre = nombre
+        self.genero = genero
+        self.popularidad = popularidad
+
+    def presentarse(self):
+        print(f"Hola, soy {self.nombre}, artista del género {self.genero} con popularidad {self.popularidad}/100.")
+
+    def actuar(self):
+        print("El artista se prepara para su actuación...")
+
+    def despedirse(self):
+        print(f"{self.nombre} agradece al público por su apoyo.\n")
+
+
+class Cantante(Artista):
+    def __init__(self, nombre, genero, popularidad, cancion_mas_popular):
+        super().__init__(nombre, genero, popularidad)
+        self.cancion_mas_popular = cancion_mas_popular
+
+    def actuar(self):
+        print(f"{self.nombre} canta su éxito '{self.cancion_mas_popular}' con gran energía.")
+
+
+class DJ(Artista):
+    def __init__(self, nombre, genero, popularidad, estilo):
+        super().__init__(nombre, genero, popularidad)
+        self.estilo = estilo
+
+    def actuar(self):
+        print(f"El DJ {self.nombre} mezcla temas de estilo {self.estilo}, haciendo vibrar al público.")
+
+
+class Banda(Artista):
+    def __init__(self, nombre, genero, popularidad, integrantes):
+        super().__init__(nombre, genero, popularidad)
+        self.integrantes = integrantes
+
+    def actuar(self):
+        print(f"La banda {self.nombre} con {self.integrantes} integrantes toca un poderoso solo de guitarra.")
+
+
+def iniciar_festival(lista_artistas):
+    print("\nComienza el festival de música\n")
+    for artista in lista_artistas:
+        artista.presentarse()
+        artista.actuar()
+        artista.despedirse()
+        print("Fin de la actuación\n")
+
+
+lista_artistas = []
+
+while True:
+    try:
+        cantidad = int(input("¿Cuántos artistas se presentarán? "))
+        if cantidad > 0:
+            break
+        else:
+            print("Debe ingresar un número mayor a 0.")
+    except ValueError:
+        print("Por favor, ingresa solo un número entero.")
+
+for i in range(cantidad):
+    print(f"\n--- Artista {i + 1} ---")
+    tipo = input("Tipo de artista (Cantante, DJ o Banda): ").strip().lower()
+
+    while tipo not in ["cantante", "dj", "banda"]:
+        print("Tipo no válido. Debe ser Cantante, DJ o Banda.")
+        tipo = input("Tipo de artista (Cantante, DJ o Banda): ").strip().lower()
+
+    nombre = input("Nombre: ")
+    genero = input("Género musical: ")
+
+    while True:
+        try:
+            popularidad = int(input("Popularidad (1-100): "))
+            if 1 <= popularidad <= 100:
+                break
+            else:
+                print("La popularidad debe estar entre 1 y 100.")
+        except ValueError:
+            print("Por favor, ingresa un número entero.")
+
+
+    if tipo == "cantante":
+        cancion = input("Canción más popular: ")
+        artista = Cantante(nombre, genero, popularidad, cancion)
+    elif tipo == "dj":
+        estilo = input("Estilo del DJ: ")
+        artista = DJ(nombre, genero, popularidad, estilo)
+    elif tipo == "banda":
+        while True:
+            try:
+                integrantes = int(input("Número de integrantes: "))
+                break
+            except ValueError:
+                print("Por favor, ingresa un número entero.")
+        artista = Banda(nombre, genero, popularidad, integrantes)
+
+    lista_artistas.append(artista)
+
+
+iniciar_festival(lista_artistas)
