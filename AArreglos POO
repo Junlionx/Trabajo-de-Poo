@@ -1,0 +1,100 @@
+nombres = []
+artistas = []
+duraciones = []
+popularidades = []
+
+def agregar_canciones():
+    cantidad = int(input("¿Cuántas canciones deseas agregar? "))
+    for i in range(cantidad):
+        print(f"\nCanción {i + 1}:")
+        nombre = input("Nombre: ")
+        artista = input("Artista: ")
+        duracion = float(input("Duración en minutos: "))
+        popularidad = int(input("Popularidad (1-100): "))
+
+        while popularidad < 1 or popularidad > 100:
+            print("La popularidad debe estar entre 1 y 100.")
+            popularidad = int(input("Popularidad (1-100): "))
+
+        nombres.append(nombre)
+        artistas.append(artista)
+        duraciones.append(duracion)
+        popularidades.append(popularidad)
+
+def ver_reportes():
+    if len(nombres) == 0:
+        print("No hay canciones registradas.")
+        return
+    
+    total = len(nombres)
+    duracion_total = sum(duraciones)
+    mayor = max(popularidades)
+    menor = min(popularidades)
+    cancion_mayor = nombres[popularidades.index(mayor)]
+    cancion_menor = nombres[popularidades.index(menor)]
+    promedio = sum(popularidades) / total
+
+    print("\n--- Reportes ---")
+    print("Total de canciones:", total)
+    print("Duración total:", duracion_total)
+    print("Canción más popular:", cancion_mayor)
+    print("Canción menos popular:", cancion_menor)
+    print("Promedio de popularidad:", promedio)
+
+def filtrar_canciones():
+    if len(nombres) == 0:
+        print("No hay canciones registradas.")
+        return
+
+    print("\n1. Buscar por artista")
+    print("2. Buscar por rango de popularidad")
+    opcion = input("Elige una opción: ")
+
+    if opcion == "1":
+        artista_buscar = input("Artista: ")
+        print("\nResultados:")
+        for i in range(len(nombres)):
+            if artistas[i].lower() == artista_buscar.lower():
+                print(nombres[i], "-", artistas[i], "-", popularidades[i])
+
+    elif opcion == "2":
+        minimo = int(input("Popularidad mínima: "))
+        maximo = int(input("Popularidad máxima: "))
+        print("\nResultados:")
+        for i in range(len(nombres)):
+            if minimo <= popularidades[i] <= maximo:
+                print(nombres[i], "-", popularidades[i])
+
+def playlist_recomendada():
+    if len(nombres) == 0:
+        print("No hay canciones registradas.")
+        return
+
+    prom = sum(popularidades) / len(popularidades)
+    print("\nPlaylist recomendada (popularidad mayor al promedio):")
+    for i in range(len(nombres)):
+        if popularidades[i] > prom:
+            print(nombres[i], "-", popularidades[i])
+
+def menu():
+    while True:
+        print("\n--- Menú ---")
+        print("1. Agregar canciones")
+        print("2. Ver reportes")
+        print("3. Buscar canciones")
+        print("4. Playlist recomendada")
+        print("5. Salir")
+        opcion = input("Opción: ")
+
+        if opcion == "1":
+            agregar_canciones()
+        elif opcion == "2":
+            ver_reportes()
+        elif opcion == "3":
+            filtrar_canciones()
+        elif opcion == "4":
+            playlist_recomendada()
+        elif opcion == "5":
+            break
+
+menu()
