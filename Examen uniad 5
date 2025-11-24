@@ -1,0 +1,49 @@
+
+estudiantes = int(input("¿Cuántos estudiantes tiene el grupo? "))
+materias = int(input("¿Cuántas materias tiene el grupo? "))
+
+
+matriz = []
+
+print("\n--- Captura de calificaciones (0 - 100) ---\n")
+
+for i in range(estudiantes):
+    fila = []
+    print(f"Estudiante {i + 1}:")
+    for j in range(materias):
+        cal = float(input(f"  Calificación en materia {j + 1}: "))
+        while cal < 0 or cal > 100:
+            print("  Error: la calificación debe estar entre 0 y 100.")
+            cal = float(input(f"  Calificación en materia {j + 1}: "))
+        fila.append(cal)
+    matriz.append(fila)
+    print()
+
+
+promedio_estudiante = [sum(fila) / materias for fila in matriz]
+
+
+promedio_materia = []
+for j in range(materias):
+    suma = sum(matriz[i][j] for i in range(estudiantes))
+    promedio_materia.append(suma / estudiantes)
+
+
+mayor = max(max(fila) for fila in matriz)
+menor = min(min(fila) for fila in matriz)
+
+
+print("\n========== RESULTADOS ==========\n")
+
+print("Promedio de cada estudiante:")
+for i, prom in enumerate(promedio_estudiante, start=1):
+    print(f"  Estudiante {i}: {prom:.2f}")
+
+print("\nPromedio de cada materia:")
+for j, prom in enumerate(promedio_materia, start=1):
+    print(f"  Materia {j}: {prom:.2f}")
+
+print(f"\nCalificación más alta: {mayor}")
+print(f"Calificación más baja: {menor}")
+
+print("\n=================================\n")
