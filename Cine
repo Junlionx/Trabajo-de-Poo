@@ -1,0 +1,90 @@
+def crear_matriz(filas, columnas):
+    matriz = []
+    for i in range(filas):
+        fila = []
+        for j in range(columnas):
+            fila.append("L")
+        matriz.append(fila)
+    return matriz
+
+def mostrar_sala(matriz):
+    print("\nSala del cine:\n")
+    for fila in matriz:
+        for asiento in fila:
+            print(asiento, end=" ")
+        print()
+    print()
+
+def reservar_asiento(matriz):
+    fila = int(input("Fila: ")) - 1
+    col = int(input("Columna: ")) - 1
+
+    if fila < 0 or fila >= len(matriz) or col < 0 or col >= len(matriz[0]):
+        print("Ese asiento no existe.\n")
+        return
+
+    if matriz[fila][col] == "L":
+        matriz[fila][col] = "X"
+        print("Asiento reservado.\n")
+    else:
+        print("Ese asiento ya está ocupado.\n")
+
+def liberar_asiento(matriz):
+    fila = int(input("Fila: ")) - 1
+    col = int(input("Columna: ")) - 1
+
+    if fila < 0 or fila >= len(matriz) or col < 0 or col >= len(matriz[0]):
+        print("Ese asiento no existe.\n")
+        return
+
+    if matriz[fila][col] == "X":
+        matriz[fila][col] = "L"
+        print("Asiento liberado.\n")
+    else:
+        print("Ese asiento ya estaba libre.\n")
+
+def estadisticas(matriz):
+    libres = 0
+    ocupados = 0
+
+    for fila in matriz:
+        for asiento in fila:
+            if asiento == "L":
+                libres += 1
+            else:
+                ocupados += 1
+
+    print("\nEstadísticas:")
+    print("Asientos libres:", libres)
+    print("Asientos ocupados:", ocupados)
+    print()
+
+def menu():
+    filas = int(input("Número de filas: "))
+    columnas = int(input("Número de columnas: "))
+    matriz = crear_matriz(filas, columnas)
+
+    while True:
+        print("----- MENÚ -----")
+        print("1. Mostrar sala")
+        print("2. Reservar asiento")
+        print("3. Liberar asiento")
+        print("4. Contar asientos ocupados y libres")
+        print("5. Salir")
+
+        opcion = input("Opción: ")
+
+        if opcion == "1":
+            mostrar_sala(matriz)
+        elif opcion == "2":
+            reservar_asiento(matriz)
+        elif opcion == "3":
+            liberar_asiento(matriz)
+        elif opcion == "4":
+            estadisticas(matriz)
+        elif opcion == "5":
+            break
+        else:
+            print("Opción inválida.\n")
+
+menu()
