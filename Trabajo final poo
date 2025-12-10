@@ -1,0 +1,142 @@
+import os
+import pickle
+
+TEXTO = "pokedex.txt"
+BINARIO = "stats.bin"
+
+def crear_archivo_texto():
+    if not os.path.exists(TEXTO):
+        with open(TEXTO, "w") as f:
+            f.write("=== MiniPokedex ===\n")
+
+
+def agregar_pokemon_texto(nombre, tipo, region, descripcion):
+    try:
+        with open(TEXTO, "a") as f:
+            f.write(f"{nombre}|{tipo}|{region}|{descripcion}\n")
+    except Exception as e:
+        print("Error al escribir en archivo de texto:", e)
+
+
+def leer_todos_texto():
+    try:
+        with open(TEXTO, "r") as f:
+            return f.readlines()
+    except FileNotFoundError:
+        print("El archivo de texto no existe.")
+        return []
+
+
+def buscar_en_texto(nombre):
+    try:
+        with open(TEXTO, "r") as f:
+            for linea in f:
+                if linea.lower().startswith(nombre.lower()):
+                    return linea.strip()
+        return None
+    except FileNotFoundError:
+        print("Archivo no encontrado.")
+        return None
+
+
+def escribir_stats(nombre, poder, rareza, vida):
+    try:
+        datos = {}
+        if os.path.exists(BINARIO):
+            with open(BINARIO, "rb") as b:
+                try:
+                    datos = pickle.load(b)
+                except EOFError:
+                    datos = {}
+
+        datos[nombre] = (poder, rareza, vida)
+
+        with open(BINARIO, "wb") as b:
+            pickle.dump(datos, b)
+
+    except Exception as e:
+        print("Error al escribir datos binarios:", e)
+
+
+def leer_stats():
+    try:
+        with open(BINARIO, "rb") as b:
+            return pickle.load(b)
+    except FileNotFoundError:
+        print("Archivo binario no encontrado.")
+        return {}
+    except Exception:
+        print("Error al leer el archivo binario.")
+        return {}
+
+
+
+def validar_numero(valor):
+    if not valor.isdigit():
+        raise ValueError("Debe ser un número entero.")
+    return int(valor)
+
+
+def menu():
+    crear_archivo_texto()
+
+    while True:
+        print("\n===== MINI POKEDEX =====")
+        print("1. Agregar Pokémon")
+        print("2. Mostrar colección completa")
+        print("3. Buscar Pokémon por nombre")
+        print("4. Mostrar estadísticas (binario)")
+        print("5. Salir")
+
+        opcion = input("Elige una opción: ")
+
+        if opcion == "1":
+            nombre = input("Nombre: ").strip()
+            tipo = input("Tipo: ").strip()
+            region = input("Región: ").strip()
+            descripcion = input("Descripción: ").strip()
+
+            if nombre == "":
+                print("El nombre no puede estar vacío.")
+                continue
+
+            agregar_pokemon_texto(nombre, tipo, region, descripcion)
+
+            try:
+                p = validar_numero(input("Nivel de poder: "))
+                r = validar_numero(input("Rareza (1-100): "))
+                v = validar_numero(input("Vida: "))
+                escribir_stats(nombre, p, r, v)
+            except ValueError as e:
+                print("Error:", e)
+
+            print("Pokémon agregado correctamente.\n")
+
+        elif opcion == "2":
+            lineas = leer_todos_texto()
+            if lineas:
+                for l in lineas:
+                    print(l.strip())
+
+        elif opcion == "3":
+            nombre = input("Nombre a buscar: ")
+            res = buscar_en_texto(nombre)
+            if res:
+                print("Encontrado:", res)
+            else:
+                print("No existe en la pokedex.")
+
+        elif opcion == "4":
+            stats = leer_stats()
+            for nombre, valores in stats.items():
+                print(f"{nombre}: Poder={valores[0]}, Rareza={valores[1]}, Vida={valores[2]}")
+
+        elif opcion == "5":
+            print("Saliendo...")
+            break
+
+        else:
+            print("Opción inválida.")
+
+
+menu()
